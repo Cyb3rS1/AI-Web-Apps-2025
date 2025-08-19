@@ -1,0 +1,240 @@
+.h1-font {
+  font-family: "Monomaniac One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.japanese-font {
+  font-family: "DotGothic16", sans-serif;
+  font-weight: 400 bold;
+  font-style: normal;
+  letter-spacing: 2px;
+}
+
+
+body {
+
+    background-color: black;
+    
+
+}
+
+#page {
+
+    border: dashed 2px white;
+    border-radius: 20px;
+    background-color: grey;
+
+}
+
+#Wrapper {
+
+    margin: 5%;
+
+}
+
+
+#Header {
+
+    border-radius: 20px 20px 0 0;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2% 5%;
+    
+
+}
+
+#Header h2 {
+
+    /** margin: 0px auto 20px; **/
+    color: blueviolet;
+
+}
+
+#PageHeading {
+
+    text-align: center;
+    /** padding: 2% 0; **/
+     margin: 0 3% 4%;
+
+}
+
+#PageHeading h2 {
+
+    color: white;
+    font-size: 2.5em;
+    font-weight: bold;
+    text-shadow: 2px 2px 2px black;   
+
+}
+
+#PageHeading p {
+
+    font-size: 1.1em;
+
+}
+
+#Nav ul{
+
+    display: flex;
+    text-align: center;
+    flex-direction: row;
+    justify-content: space-around;
+    list-style-type: none;
+    font-weight: bold;
+    background-color: blueviolet;
+    padding: 15px;
+
+}
+
+#Nav ul li {
+
+    font-size: 1.2em;
+
+}
+
+
+
+.lists {
+
+    padding: 20px;
+
+}
+
+h1 {
+
+    color: blue;
+    font-size: 4em;
+    margin: 10px auto;
+    /* background-color: white; */
+
+}
+
+h2 {
+
+    color: green;
+
+}
+
+p {
+
+    color: white;
+
+}
+
+#Container {
+
+    /* outline: black solid 1px; */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+
+}
+
+.column {
+
+    flex-grow: 1;
+    align-items: center;
+    justify-content: space-between;
+    width: 1fr;
+
+}
+
+.column, .column p {
+
+    display: flex;
+    
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 10px;
+    background-color: white;
+    text-decoration: underline;
+    color: black;
+
+}
+
+img {
+
+    width: 1fr;
+    padding: 5%;
+
+}
+
+.listHeader {
+
+    color: orange;
+    font-weight: bold;
+
+}
+
+ol, ul {
+
+    color: white;
+
+}
+
+footer {
+
+    border-radius: 0 0 20px 20px;
+
+}
+
+/** 1092px */
+
+@media screen and (max-width: 1054px) {
+
+    
+
+    /* img {
+
+        padding: 1%;
+        width: 35%;
+
+    } */
+
+    .column {
+
+        border-bottom: solid 1px grey;
+
+    }
+
+}
+
+@media screen and (max-width: 560px) {
+
+    #Container {
+
+        flex-direction: column;
+
+    }
+
+
+    #Nav ul{
+
+        flex-direction: column;
+
+    }
+
+     #Nav ul li {
+        
+        padding: 2% 0;
+
+    }
+
+}
+
+
+@media screen and (max-width: 375px) {
+    
+    #Header h1{
+
+        line-height: 1;
+
+    }
+
+}
+
