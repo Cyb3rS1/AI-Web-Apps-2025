@@ -7,9 +7,8 @@ const difficultyLevel = document.getElementById("difficulty-level");
 const difficultyTextNode = document.createTextNode("");
 const scoreArea = document.getElementById("score-area");
 const scoreTextNode = document.createTextNode("");
-
-
-
+const questionNumberArea = document.getElementById("question-number-area");
+const qNumberTextNode = document.createTextNode("");
 
 // buttons
 const btnStart = document.getElementById("btn-start");
@@ -28,6 +27,7 @@ let endModal = document.getElementById("end-modal");
 // dynamic variables for quiz logic
 let selectedAnswer;
 let pointValue;
+let questionNumber = 1;
 let counter = 0;
 let score = 0;
 
@@ -116,6 +116,9 @@ let quizQuestions = [
 
 function startQuiz(){
 
+    qNumberTextNode.textContent = questionNumber;
+    questionNumberArea.appendChild(qNumberTextNode);
+
     scoreTextNode.textContent = score;
     hidePage(landingPage);
     setupQuizQuestion(quizQuestions);
@@ -140,6 +143,9 @@ function nextQuestion(){
     difficultyLevel.removeChild(difficultyTextNode);
     questionArea.innerHTML = '';
 
+    questionNumber++;
+    qNumberTextNode.textContent = questionNumber;
+
     counter++;
 
     setupQuizQuestion(quizQuestions);
@@ -157,11 +163,12 @@ function setupQuizQuestion(quizQuestions){
     console.log(answerChoices);
 
     //Create the paragraph to ask the question
-    let questionText = document.createElement("p");
+    let questionText = document.createElement("h2");
     questionText.innerText = currentQuestion;
 
     console.log(questionText.innerText);
 
+    
     questionArea.appendChild(questionText);
 
     // append the difficulty level to difficultyLevel depending
