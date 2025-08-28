@@ -1,0 +1,12 @@
+.transparent {
+
+    background-color: rgba(201, 228, 202, 0.7);
+    border-bottom: rgb(201, 201, 201) 1px solid;
+
+}
+
+.nav-link {
+
+    text-align: end;
+
+}
