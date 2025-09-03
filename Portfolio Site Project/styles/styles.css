@@ -104,6 +104,12 @@ p {
 
 }
 
+.gray-green-text {
+
+  color: #808780;
+
+}
+
 .luigi-green {
 
   color: #26920b;
@@ -128,10 +134,15 @@ p {
   
 }
 
-
 .yellow {
 
   color: #ffd23d
+
+}
+
+.dark-text {
+
+  color: #333333;
 
 }
 
