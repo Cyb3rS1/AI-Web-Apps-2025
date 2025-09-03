@@ -56,6 +56,12 @@ h4 {
 
 }
 
+h5 {
+
+  font-family: "Prosto One", sans-serif;
+
+}
+
 p {
 
   font-family: "Amiko", sans-serif;
@@ -98,11 +104,30 @@ p {
 
 }
 
+.luigi-green {
+
+  color: #26920b;
+
+}
+
+.moss-green {
+
+  color: #4a914a;
+
+}
+
+.muted-green {
+
+  background-color: #6d8c6d;
+
+}
+
 .light-gray {
 
-  background-color: #d9d9d6;
+  background-color: #e3e3e3;
   
 }
+
 
 .yellow {
 
@@ -163,9 +188,23 @@ p {
 /* media sizes etc. */
 .me-gif {
 
-  height: auto;
-  border-radius: 10px;
+  display: block;
+  border-radius: 20px;
+  max-width: 358px;
 
+
+}
+
+.cred-img {
+
+  width: 20%;
+
+}
+
+.clubs-img {
+
+  display: inline-block;
+  width: 100%;
 
 }
 
