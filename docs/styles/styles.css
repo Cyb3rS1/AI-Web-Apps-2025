@@ -1,3 +1,73 @@
+/* CSS variables */
+:root {
+
+  /* colors */
+  --transparent: rgba(255, 255, 255, 0.85);
+  --sage: #a3aaa3;
+  --gray-green: #808780;
+  --luigi-green: #26920b;
+  --moss-green: #4a914a;
+  --muted-green: #6d8c6d;
+  --dark-green: #346334;
+  --light-gray: #e3e3e3;
+  --yellow: #ffd23d;
+  --dark-cotton: #333333;
+  --off-black: #1a1a1a;
+
+}
+
+/* custom id/class elements and sections */
+.me-gif {
+
+  border-radius: 20px;
+  max-width: 358px;
+
+}
+
+.cred-img {
+
+  width: 20%;
+
+}
+
+.clubs-img {
+
+  display: inline-block;
+  width: 100%;
+
+}
+#reachOutBtn {
+
+  font-size: 14px;
+  border-radius: 11px;
+  padding: 14px 20px;
+
+}
+
+#footerPageLinks a {
+
+  font-family: "Silkscreen", sans-serif;
+  color: var(--dark-cotton);
+  line-height: 2;
+
+}
+
+.social-icon {
+
+  width: 25px;
+  margin: auto 10px;
+
+}
+
+#footerSignature {
+
+  width: 173.5px;
+  height: 82.5px;
+
+}
+
+
+
 /* fonts */
 .silkscreen-font {
   font-family: "Silkscreen", sans-serif;
@@ -33,14 +103,14 @@
 h1 {
 
   font-family: "Prosto One", sans-serif;
-  color: #4a914a;
+  color:var(--moss-green);
 
 }
 
 h2 {
 
   font-family: "Prosto One", sans-serif;
-  color: #333333;
+  color: var(--dark-cotton);
 
 }
 
@@ -67,6 +137,12 @@ p {
   font-family: "Amiko", sans-serif;
   font-size: 1em;
   color: #1d1e20;
+
+}
+
+footer {
+
+  background-color: #f1f1f1;
 
 }
 
@@ -110,9 +186,15 @@ p {
 
 }
 
-.luigi-green {
+.luigi-green-text {
 
   color: #26920b;
+
+}
+
+.luigi-green {
+
+  background-color: #26920b;
 
 }
 
@@ -128,6 +210,18 @@ p {
 
 }
 
+.muted-green-text {
+
+  color: #6d8c6d;
+
+}
+
+.dark-green {
+
+  color: #346334;
+
+}
+
 .light-gray {
 
   background-color: #e3e3e3;
@@ -136,13 +230,19 @@ p {
 
 .yellow {
 
-  color: #ffd23d
+  color: #ffd23d;
 
 }
 
 .dark-text {
 
   color: #333333;
+
+}
+
+.off-black-text {
+
+  color: #1a1a1a;
 
 }
 
@@ -196,28 +296,6 @@ p {
 
 }
 
-/* media sizes etc. */
-.me-gif {
-
-  display: block;
-  border-radius: 20px;
-  max-width: 358px;
-
-
-}
-
-.cred-img {
-
-  width: 20%;
-
-}
-
-.clubs-img {
-
-  display: inline-block;
-  width: 100%;
-
-}
 
 /* media queries */
 @media screen and (max-width: 920px) {
