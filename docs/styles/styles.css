@@ -12,11 +12,31 @@
   --light-gray: #e3e3e3;
   --yellow: #ffd23d;
   --dark-cotton: #333333;
+  --ash-grey: #545454;
   --off-black: #1a1a1a;
+  --oak-brown: #7a6e43;
 
 }
 
 /* custom id/class elements and sections */
+
+#navBar {
+
+  transition: box-shadow 0.3s ease;
+
+}
+
+
+.shadow-header {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.container-shadow {
+
+  box-shadow: -10px 10px 3px 0px var(--dark-cotton);
+
+}
+
 .me-gif {
 
   border-radius: 20px;
@@ -27,6 +47,63 @@
 .certCard {
 
   height: 350px;
+
+}
+
+.certCard.animate {
+
+  animation: bounce 1s ease-in-out; /* Apply bounce animation */
+  animation-iteration-count: 1;
+  animation-delay: 2s;
+  animation-fill-mode: forwards;
+
+}
+
+.firstProjectImg.animate {
+
+  animation: bounce 1s ease-in-out; /* Apply bounce animation */
+  animation-iteration-count: 1;
+  animation-delay: 2s;
+  animation-fill-mode: forwards;
+
+}
+
+.firstBrandingPackagingImg.animate {
+
+  animation: bounce 1s ease-in-out; /* Apply bounce animation */
+  animation-iteration-count: 1;
+  animation-delay: 2s;
+  animation-fill-mode: forwards;
+
+}
+
+.firstSmorgasbordImg.animate {
+
+  animation: bounce 1s ease-in-out; /* Apply bounce animation */
+  animation-iteration-count: 1;
+  animation-delay: 2s;
+  animation-fill-mode: forwards;
+
+}
+
+
+
+@keyframes bounce {
+  0% {
+    transform: translateX(0); /* Starting position */
+  }
+  25% {
+    transform: translateX(-20px); /* First bounce up */
+  }
+  50% {
+    transform: translateX(0); /* First bounce down */
+  }
+  75% {
+    transform: translateX(-20px); /* Second, smaller bounce up */
+  }
+  100% {
+    transform: translateX(0); /* Settling down */
+  }
 
 }
 
@@ -158,7 +235,6 @@ footer {
 .transparent {
 
   background-color: rgba(255, 255, 255, 0.85);
-  border-bottom: rgb(201, 201, 201) 1px solid;
 
 }
 
@@ -241,11 +317,11 @@ footer {
 }
 
 /* nav stuff */
-.navbar {
+/* .navbar {
 
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 
-}
+} */
 
 .navbar-toggler {
 
@@ -273,13 +349,12 @@ footer {
 .navbar-nav .nav-link.active .link-offset-3 {
 
   color: #346334;
-
+  
 }
 
 .navbar-nav .nav-link.active {
 
   color: #346334;
-  
 
 }
 
@@ -290,30 +365,7 @@ footer {
 
 }
 
-@keyframes bounce {
-   0% {
-    transform: translateX(0); /* Starting position */
-  }
-  25% {
-    transform: translateX(-20px); /* First bounce up */
-  }
-  50% {
-    transform: translateX(0); /* First bounce down */
-  }
-  75% {
-    transform: translateX(-20px); /* Second, smaller bounce up */
-  }
-  100% {
-    transform: translateX(0); /* Settling down */
-  }
 
-
-}
-.bouncing-element.animate-bounce { /* Add 'active' class via JS on swipe */
-  animation: bounce 1s ease-in-out; /* Apply bounce animation */
-  animation-iteration-count: 1;
-  animation-fill-mode: forwards;
-}
 
 
 /* media queries */

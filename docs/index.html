@@ -6,15 +6,16 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="./styles/styles.css">
+    <script src="scripts/script.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Prosto+One&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Amiko:wght@400;600;700&display=swap" rel="stylesheet">
-    <title>Document</title>
+    <title>Home</title>
 </head>
 <body>
-  <nav class="navbar navbar-expand-md sticky-top transparent justify-content-center">
+  <nav id="navBar" class="navbar navbar-expand-md sticky-top transparent justify-content-center">
   <div class="container-fluid flex-md-column flex-sm-row">
     <a class="navbar-brand" href="index.html">
       <img src="assets/transparent_signature.png" alt="Logo" width="115" height="55" class="d-inline-block align-text-top">
@@ -24,11 +25,11 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav-link active" aria-current="page" href="#">Home</a>
-        <a class="nav-link link-offset-3-hover" href="#">Education</a>
-        <a class="nav-link link-offset-3-hover" href="#">Highlights</a>
-        <a class="nav-link link-offset-3-hover" href="#">Projects</a>
-        <a class="nav-link link-offset-3-hover" href="#">Contact</a>
+        <a class="nav-link active link-offset-3" aria-current="page" href="index.html">Home</a>
+        <a class="nav-link link-offset-3-hover" href="#education">Education</a>
+        <a class="nav-link link-offset-3-hover" href="#highlights">Highlights</a>
+        <a class="nav-link link-offset-3-hover" href="/AI-Web-Apps-2025/docs/projects.html">Projects</a>
+        <a class="nav-link link-offset-3-hover" href="/AI-Web-Apps-2025/docs/contact.html">Contact</a>
       </div>
     </div>
   </div>
@@ -45,7 +46,7 @@
           </div>
         <br>
           <div class="col-sm d-block mx-auto align-middle">
-            <p>I'm a computer programmer and web developer pursuing a BS in Computer Programming and Analysis. As a passionate science student, 
+            <p class="align-middle m-auto">I'm a computer programmer and web developer pursuing a BS in Computer Programming and Analysis. As a passionate science student, 
               I enjoy creating the logic behind programs that guarantee a rewarding experience and seamless user interaction. 
               <br><br>
               On the artistic side, 
@@ -58,7 +59,7 @@
   </div>
 <!--End of Opening Bio Segment-->
 <!--Education and Experience-->
-  <div class="container-fluid m-auto pb-4 text-center align-center sage">
+  <div id="education" class="container-fluid m-auto pb-4 text-center align-center sage">
     <h2 class="display-5 p-4 m-0 text-light">Education and Experience</h2>
     <div class="container d-flex m-auto p-4 row-gap-2 gray-green flex-column">
       <section class="m-auto col-10 col-md-8">
@@ -72,10 +73,11 @@
       <div class="col d-flex flex-column">
         <div class="container col-sm-9 col-md-10 m-auto">
 
-          <div id="carouselExampleIndicators" class="carousel slide col-11 d-md-none m-auto">
+          <!-- Responsive carousel only displays on xs and sm screens -->
+          <div id="certCarouselIndicators" class="carousel slide col-11 d-md-none m-auto" data-bs-touch="true" data-bs-ride="true">
             <div class="carousel-inner pb-5">
               <div class="carousel-item active">
-                <div class="card certCard p-2 bouncing-element animate-bounce ">
+                <div id="firstCertCard" class="card certCard p-2">
                   <span class="my-auto d-flex flex-column flex-md-row">
                     <img src="assets/python.png" class="card-img-top w-50 m-auto" alt="">
                     <div class="card-body">
@@ -124,13 +126,15 @@
               </div>
             </div>
             <div class="carousel-indicators">
-              <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-              <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-              <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
-              <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3" aria-label="Slide 4"></button>
+              <button type="button" data-bs-target="#certCarouselIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+              <button type="button" data-bs-target="#certCarouselIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+              <button type="button" data-bs-target="#certCarouselIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+              <button type="button" data-bs-target="#certCarouselIndicators" data-bs-slide-to="3" aria-label="Slide 4"></button>
             </div>
           </div>
+          <!-- End of sm/xs responsive carousel -->
 
+          <!-- Row of cards only displays on md screens and above -->
           <div class="d-none d-md-flex flex-row flex-wrap mb-4">
           <div class="card certCard h-25 p-4">
             <span class="my-auto d-flex flex-column flex-md-row">
@@ -172,14 +176,13 @@
               </div>
             </span>
           </div>
-
         </div>
-
-        </div>
+        <!-- End of md+ responsive carousel -->
+      </div>
 
         <div class="d-md-flex flex-row flex-md-row justify-content-around align-middle">
             <h2 class="col col-md-4 d-flex align-self-center text-md-end justify-content-center p-2 my-3 text-light">Clubs and Recognitions</h2>
-            <section class="col-12 col-md-7">
+            <section class="col-11 col-md-7 m-auto">
               <img class="rounded-5 d-inline w-100" src="assets/clubsAndRecs.png">
             </section>
         </div>
@@ -230,7 +233,7 @@
   </div>
 <!--End of Education and Experience-->
 <!--Project Highlights Banner Title-->
-  <h1 class="container-fluid text-center display-5 m-0 py-4 silkscreen-font moss-green">Project Highlights</h1>
+  <h1 id="highlights" class="container-fluid text-center display-5 m-0 py-4 silkscreen-font moss-green">Project Highlights</h1>
 <!-- End of Project Highlights Banner Title-->
 <!--Visuals that speak-->
   <div class="container-fluid col align-center justify-content-center muted-green">
@@ -240,8 +243,8 @@
         <div class="col-12 col-sm-8 col-md-6 justify-content-center mx-auto">
           <img class="d-inline-block rounded-4 w-100" src="assets/metamorphosis.png">
         </div>
-        <h5 class="col-sm-10 mx-auto text-center mb-0 mt-2">Conveying messages through graphics and text.</h5>
-        <p class=" my-2 text-center text-light">As a former art student, I enjoy combining standalone visuals with literary devices that complement each other 
+        <h5 class="col-sm-10 mx-auto col-md-9 mb-0 mt-2">Conveying messages through graphics and text.</h5>
+        <p class=" my-2 col-sm-12 col-md-9 align-self-center text-light">As a former art student, I enjoy combining standalone visuals with literary devices that complement each other 
           — some are easier to familiarize, while others require deeper observation and background knowledge.</p>
         <a class="d-block m-0 text-center link-offset-1 silkscreen-font yellow" href="#projects-graphic-design">Check out more ></a>
     </div>    
@@ -254,8 +257,8 @@
         <div class="col-12 col-sm-8 col-md-6 justify-content-center mx-auto"> 
           <img class="d-inline-block rounded-4 w-100" src="assets/bugHuntGame.gif">
         </div>
-        <h5 class="off-black-text text-md-center mx-auto mb-0 mt-2">Creating a game from code.</h5>
-        <p class="my-2 col-sm-12 col-md-9 align-self-center text-md-center">My first-ever minigame — which began as a class assignment — is online and ready to play. 
+        <h5 class="off-black-text mx-auto mb-0 mt-2">Creating a game from code.</h5>
+        <p class="my-2 col-sm-12 col-md-9 align-self-center">My first-ever minigame — which began as a class assignment — is online and ready to play. 
           It was made possible using a mix of HTML, CSS, and inline JavaScript.</p>
         <a class="d-block text-center m-0 link-offset-1 silkscreen-font muted-green-text" href="#projects-graphic-design">Give it a whirl ></a>
     </div>    
@@ -269,13 +272,13 @@
       <button id="reachOutBtn" class="d-block m-auto border-0 luigi-green text-white silkscreen-font">Reach out</button>
     </div>
     <div id="footerPageLinks" class="d-flex order-sm-2 order-md-5 flex-column link-offset-1 text-center text-md-start">
-      <a href="#">Home</a>
-      <a href="#">Projects</a>
-      <a href="#">Contact</a>
+      <a href="index.html">Home</a>
+      <a href="/AI-Web-Apps-2025/docs/projects.html">Projects</a>
+      <a href="/AI-Web-Apps-2025/docs/contact.html">Contact</a>
     </div>
     <div class="order-sm-3 order-md-3 d-md-none text-center">
-      <a href="#"><img class="social-icon" src="assets/linkedin.png"></a>
-      <a href="#"><img class="social-icon" src="assets/github.png"></a>
+      <a href="https://www.linkedin.com/in/sierra-smith-401bb4291/"><img class="social-icon" src="assets/linkedin.png"></a>
+      <a href="https://github.com/Cyb3rS1"><img class="social-icon" src="assets/github.png"></a>
     </div>
 
     <!--Hidden element that shows on medium screens and above-->
@@ -287,8 +290,8 @@
       </div>
       <div class="row justify-content-center">
       <section class="col-auto text-center">
-        <a href="#"><img class="social-icon" src="assets/linkedin.png"></a>
-        <a href="#"><img class="social-icon" src="assets/github.png"></a>
+        <a href="https://www.linkedin.com/in/sierra-smith-401bb4291/"><img class="social-icon" src="assets/linkedin.png"></a>
+        <a href="https://github.com/Cyb3rS1"><img class="social-icon" src="assets/github.png"></a>
       </section>
       </div>
     </div>
