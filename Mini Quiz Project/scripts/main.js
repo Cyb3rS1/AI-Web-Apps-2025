@@ -1,6 +1,12 @@
 // page elements
 const landingPage = document.getElementById("landing-page");
+const optionsPage = document.getElementById("options-page");
 const quizPage = document.getElementById("quiz-page");
+
+const difficultyCheckboxes = document.querySelectorAll('input[type="checkbox"][name="difficulty"]');
+let selectedNumOfQuestionsnumOfQuestions = document.getElementById("num_of_questions");
+let selectedDifficulty = [];
+
 const questionArea = document.getElementById("question-area");
 const quizMessageBox = document.getElementById("quiz-message-box");
 const difficultyLevel = document.getElementById("difficulty-level");
@@ -12,6 +18,9 @@ const qNumberTextNode = document.createTextNode("");
 
 // buttons
 const btnStart = document.getElementById("btn-start");
+const btnOptions = document.getElementById("btn-options");
+const btnsaveOptions = document.getElementById("btn-save-options");
+const btnCancelOptions = document.getElementById("btn-cancel-options");
 const btnCheckAnswer = document.getElementById("btn-check-answer");
 const btnNext = document.getElementById("btn-next"); 
 const btnTryAgain = document.getElementById("btn-try-again");
@@ -30,6 +39,53 @@ let pointValue;
 let questionNumber = 1;
 let counter = 0;
 let score = 0;
+
+function buildApiString() {
+
+    return "https://opentdb.com/api.php?amount="+questionAmount+"&category=28&difficulty="+questionDiff+"&type=multiple";
+
+}
+
+// fetching questions for API call
+let questionDiff = "medium";
+let questionAmount = 5;
+let url = buildApiString();
+
+
+async function getQuestions(){
+
+    try {
+
+        let res = await fetch(url);
+        let data = await res.json();
+
+        if (!data || !data.results) {
+            console.warn("Data undefined, retrying...");
+            setTimeout(getQuestions, 1000);
+            return;
+        }
+        console.log("We have questions!");
+
+        for (let element of data.results) {
+            let thisQuestion = {
+                question: element.question,
+                answers: element.incorrect_answers,
+                correctAnswerIndex: element.incorrect_answers.length,
+                pointValue: 1
+            };
+
+            quizQuestions.push(thisQuestion);
+        }
+    } catch (err) {
+        console.error("Error fetching Questions:", err);
+        setTimeout(getQuestions, 1000);
+
+    } 
+}
+
+let quizQuestions = [];
+
+getQuestions("https://opentdb.com/api.php?amount="+questionAmount+"&category=28&difficulty="+questionDiff+"&type=multiple");
 
 // display the current score on the page by appending it
 // to the scoreArea h3 element
@@ -65,6 +121,12 @@ btnStart.addEventListener('click', function(event){
     startQuiz();
 });
 
+btnOptions.addEventListener('click', function(event){
+
+    openOptions();
+
+});
+
 // when the check answer button is pressed, the user's answer
 // is assessed based on the quizAnswers array
 btnCheckAnswer.addEventListener('click', function(event){
@@ -83,7 +145,7 @@ btnTryAgain.addEventListener('click', function(event) {
     hidePage(currentModal);
 })
 
-
+/*
 let quizQuestions = [
 
     {"question": "What color is the sky?",
@@ -111,7 +173,7 @@ let quizQuestions = [
     "correctAnswerIndex": 0,
     "pointValue": 3},
 
-];
+]; */
 
 
 function startQuiz(){
@@ -124,6 +186,40 @@ function startQuiz(){
     setupQuizQuestion(quizQuestions);
     showPage(quizPage);
 }
+
+function openOptions(){
+
+    hidePage(landingPage);
+    showPage(optionsPage);
+
+}
+
+btnsaveOptions.addEventListener('click', function(event){
+
+    selectedNumOfQuestions = document.getElementById("num_of_questions").value;
+
+    difficultyCheckboxes.forEach(checkbox => {
+
+        if (checkbox.checked) {
+            selectedDifficulty.push(checkbox.value);
+        }
+
+    });
+
+    console.log(selectedDifficulty);
+    console.log(selectedNumOfQuestions);
+
+    hidePage(optionsPage);
+    showPage(landingPage);
+
+});
+
+btnCancelOptions.addEventListener('click', function(event){
+
+    hidePage(optionsPage);
+    showPage(landingPage);
+
+});
 
 function endQuiz(){
 

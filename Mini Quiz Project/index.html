@@ -13,7 +13,29 @@
                 <h2>Welcome to the Quiz!</h2>
                 <!-- First screen, or "start menu" for our quiz app -->
                 <button id="btn-start">Start the Quiz</button>
+                <button id="btn-options">Options</button>
             </div>
+
+            <div class="page" id="options-page">
+                <h2>Options</h2>
+
+                <p>Number of questions:</p>
+                <input type="number" id="num_of_questions" name="num_of_questions" min="1" max="20" value="5">
+
+                <p>Difficulty:</p>
+                    <input type="checkbox" id="easy" name="difficulty" value="easy">
+                    <label for="easy">Easy</label><br>
+                    <input type="checkbox" id="medium" name="difficulty" value="medium" checked>
+                    <label for="medium">Medium</label><br>
+                    <input type="checkbox" id="hard" name="difficulty" value="hard">
+                    <label for="hard">Hard</label><br><br>
+
+                <div id="btn-options-area">
+                    <button id="btn-save-options">Save Options</button>
+                    <button id="btn-cancel-options">Cancel</button>
+                </div>
+            </div>
+
             <div class="page" id="quiz-page">
                 <!-- Second screen for the quiz game -->
                 <h3 id="question-number-area">Question </h3>
