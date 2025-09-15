@@ -4,7 +4,7 @@ const optionsPage = document.getElementById("options-page");
 const quizPage = document.getElementById("quiz-page");
 
 const difficultyCheckboxes = document.querySelectorAll('input[type="checkbox"][name="difficulty"]');
-let selectedNumOfQuestionsnumOfQuestions = document.getElementById("num_of_questions");
+let numOfQuestions = document.getElementById("num_of_questions");
 let selectedDifficulty = [];
 
 const questionArea = document.getElementById("question-area");
@@ -42,12 +42,13 @@ let score = 0;
 
 function buildApiString() {
 
-    return "https://opentdb.com/api.php?amount="+questionAmount+"&category=28&difficulty="+questionDiff+"&type=multiple";
+    return "https://opentdb.com/api.php?amount="+questionAmount+"&category=28&difficulty="+questionDifficulty+"&type=multiple";
 
 }
 
 // fetching questions for API call
-let questionDiff = "medium";
+// (defauly question difficulty and question amount)
+let questionDifficulty = "medium";
 let questionAmount = 5;
 let url = buildApiString();
 
@@ -85,7 +86,9 @@ async function getQuestions(){
 
 let quizQuestions = [];
 
-getQuestions("https://opentdb.com/api.php?amount="+questionAmount+"&category=28&difficulty="+questionDiff+"&type=multiple");
+getQuestions("https://opentdb.com/api.php?amount="+questionAmount+"&category=28&difficulty="+questionDifficulty+"&type=multiple");
+
+console.log(quizQuestions);
 
 // display the current score on the page by appending it
 // to the scoreArea h3 element
@@ -196,8 +199,9 @@ function openOptions(){
 
 btnsaveOptions.addEventListener('click', function(event){
 
-    selectedNumOfQuestions = document.getElementById("num_of_questions").value;
 
+    questionAmount = numOfQuestions.value;
+    
     difficultyCheckboxes.forEach(checkbox => {
 
         if (checkbox.checked) {
