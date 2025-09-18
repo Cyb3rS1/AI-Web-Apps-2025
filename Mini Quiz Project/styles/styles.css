@@ -51,26 +51,17 @@ h2 {
     font-weight: bold;
     text-shadow: 2px 2px 2px antiquewhite;
 
-    outline: 2px solid blue;
-    background-color: rgba(96, 111, 250, 0.637);
+    
     margin: 0 7%;
-    padding: 15%;
-    border-radius: 10px;
-
-    display: block;
-    width: 75%;
-    height: 75%;
-    align-items: center;
-    justify-content: center;
-    align-content: center;
     
 }
 
 .page{
+
+    outline: 2px solid blue;
+    background-color: rgba(96, 111, 250, 0.637);
    
     border-radius: 10px;
-
-    display: inline;
     align-self: center;
     text-align: center;
     justify-content: center;
@@ -82,18 +73,11 @@ h2 {
 
 #quiz-page {
 
-    width: 220px;
-    height: 300px;
-
-}
-
-#options-page {
-
     display: none;
-    width: 300px;
-    height: 400px;
 
 }
+
+
 
 #question-number {
 
@@ -128,7 +112,7 @@ select, option {
 
 }
 
-#modal-container {
+#modal-container, #modal-container-quiz-options {
 
     display: none; /* Hidden by default */
     position: absolute;
@@ -142,7 +126,7 @@ select, option {
 
 }
 
-#win-modal, #lose-modal, #end-modal {
+#undefined-difficulty-modal, #win-modal, #lose-modal, #end-modal {
 
     display: none;
     position: absolute;

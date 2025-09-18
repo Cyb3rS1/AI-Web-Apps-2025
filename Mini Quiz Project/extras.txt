@@ -1,0 +1,54 @@
+-- some things that I might need later in my code, but don't need right now
+
+/*
+let quizQuestions = [
+
+    {"question": "What color is the sky?",
+    "answers": ['red', 'blue', 'yellow', 'turtles'],
+    "correctAnswerIndex": 1,
+    "pointValue": 1},
+
+    {"question": "What is the largest sea in the world?",
+    "answers": ['Arabian Sea', 'Coral Sea', 'Carribean Sea', 'Philippine Sea'],
+    "correctAnswerIndex": 3,
+    "pointValue": 2},
+
+    {"question": "What galaxy are we in?",
+    "answers": ['Andromeda', 'Milky Way', 'Canis Major Dwarf', 'Snickers'],
+    "correctAnswerIndex": 1,
+    "pointValue": 1},
+
+    {"question": "What is the rarest element in the universe?",
+    "answers": ['Palladium', 'Oxygen', 'Astatine', 'Scandium'],
+    "correctAnswerIndex": 2,
+    "pointValue": 3},
+
+    {"question": "What cannot be found in space?",
+    "answers": ['Sound waves', 'Diamonds', 'Gravity', 'Ice giants'],
+    "correctAnswerIndex": 0,
+    "pointValue": 3},
+
+]; */
+
+/* Basic exammple of working with local storage to save and retrieve an array of objects
+let test_questions = [
+    {
+        'question': "answer",
+        'points': "42"
+
+    },
+    {
+        'question2': "answer2",
+        'points2': "42"
+
+    }
+
+];
+
+    localStorage.setItem("saved-questions", JSON.stringify(test_questions));
+    let retrieved_questions = localStorage.getItem("saved-questions");
+    console.log(retrieved_questions);
+    retrieved_questions = JSON.parse(retrieved_questions);
+    console.log(retrieved_questions);
+
+*/

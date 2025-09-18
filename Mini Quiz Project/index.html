@@ -3,41 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="./styles/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <title>Quiz App</title>
 </head>
 <body>
     <h1>Quiz Game</h1>
-        <div id="Container">
-            <div class="page" id="landing-page">
+        <div id="Container" class="container d-flex flex-column row-gap-3">
+            <div class="page container col-7 p-4 rounded-4" id="landing-page">
                 <h2>Welcome to the Quiz!</h2>
                 <!-- First screen, or "start menu" for our quiz app -->
                 <button id="btn-start">Start the Quiz</button>
-                <button id="btn-options">Options</button>
+                <!-- <button id="btn-options">Options</button> -->
+                    <button type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidthOptions" aria-expanded="false" aria-controls="collapseWidthOptions">
+                        Options
+                    </button>
+                    <div class="collapse" id="collapseWidthOptions">
+                        <div class="row d-flex m-2 mt-3 border-top border-3 border-dashed pt-3">
+                            <div class="col d-flex flex-column">
+                                <p>Number of questions</p>
+                                <input type="number" id="num_of_questions" name="num_of_questions" class="col-3 m-auto text-center" min="1" max="20" value="5">
+
+                                <p>Difficulty</p>
+                                    <div class="d-flex flex-row coloumn-gap-2">
+                                        <div>
+                                            <input type="checkbox" id="easy" name="difficulty" value="easy">
+                                            <label for="easy">Easy</label><br>
+                                        </div>
+                                        <div>
+                                            <input type="checkbox" id="medium" name="difficulty" value="medium" checked>
+                                            <label for="medium">Medium</label><br>
+                                        </div>
+                                        <div>
+                                            <input type="checkbox" id="hard" name="difficulty" value="hard">
+                                            <label for="hard">Hard</label>
+                                        </div>
+                                    </div>
+                            </div>
+
+                            <div class="col d-flex flex-column justify-content-around">
+
+                                <label for="categories" class="align-start">Category</label>
+                                <select name="categories" id="categories" class="text-center mb-5 w-25">
+                                <!-- categories will appear here -->
+                                </select>
+                                
+                                <div id="btn-options-area">
+                                    <button id="btn-save-options">Save Options</button>
+                                    <button id="btn-cancel-options">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                        <div id="modal-container-quiz-options">
+                            <div id="undefined-difficulty-modal">
+                                <p>Please specify at least one difficulty level</p>
+                                <button id="btn-okay">Okay</button>
+                            </div>
+                        </div>
+                    </div>
             </div>
 
-            <div class="page" id="options-page">
-                <h2>Options</h2>
-
-                <p>Number of questions:</p>
-                <input type="number" id="num_of_questions" name="num_of_questions" min="1" max="20" value="5">
-
-                <p>Difficulty:</p>
-                    <input type="checkbox" id="easy" name="difficulty" value="easy">
-                    <label for="easy">Easy</label><br>
-                    <input type="checkbox" id="medium" name="difficulty" value="medium" checked>
-                    <label for="medium">Medium</label><br>
-                    <input type="checkbox" id="hard" name="difficulty" value="hard">
-                    <label for="hard">Hard</label><br><br>
-
-                <div id="btn-options-area">
-                    <button id="btn-save-options">Save Options</button>
-                    <button id="btn-cancel-options">Cancel</button>
-                </div>
-            </div>
-
-            <div class="page" id="quiz-page">
+            <div class="page p-3 px-4" id="quiz-page">
                 <!-- Second screen for the quiz game -->
+                <h3 id="category-text-area"></h3>
                 <h3 id="question-number-area">Question </h3>
                 <p id="difficulty-level">Difficulty: </p>
                 <div id="question-area"></div>
@@ -67,5 +101,11 @@
             </div>
     </div>
     <script type="text/javascript" src="./scripts/main.js"></script>
+    <script>
+        $('#categories').select2({
+        dropdownAutoWidth: false,
+        width: 'resolve'
+        });
+    </script>
 </body>
 </html>
