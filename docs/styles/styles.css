@@ -225,7 +225,7 @@ footer {
 
 }
 
-.small {
+/* .small {
 
   font-family: "Silkscreen", sans-serif;
 
@@ -322,6 +322,39 @@ footer {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 
 } */
+
+.custom-carousel-control {
+  width: auto;
+}
+
+.carousel-control-prev.custom-carousel-control {
+  left: -40px; /* push it outside the image area */
+}
+
+.carousel-control-next.custom-carousel-control {
+  right: -40px; /* push it outside the image area */
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-size: 40px 40px;
+  filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
+}
+
+/* Make Bootstrap carousel arrows gray without adding backgrounds */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  filter: invert(60%) sepia(0%) saturate(0%) hue-rotate(180deg) brightness(90%);
+  /* creates a medium gray tone */
+}
+
+/* Optional hover effect for a bit of feedback */
+.carousel-control-prev-icon:hover,
+.carousel-control-next-icon:hover {
+  filter: invert(40%) sepia(0%) saturate(0%) hue-rotate(180deg) brightness(70%);
+  transition: filter 0.2s ease;
+}
+
 
 .navbar-toggler {
 
