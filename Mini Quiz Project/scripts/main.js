@@ -3,6 +3,8 @@ const landingPage = document.getElementById("landing-page");
 const optionsPage = document.getElementById("options-page");
 const quizPage = document.getElementById("quiz-page");
 
+
+
 const difficultyCheckboxes = document.querySelectorAll('input[type="checkbox"][name="difficulty"]');
 let numOfQuestions = document.getElementById("num_of_questions");
 let selectedDifficulty = [];
@@ -23,7 +25,7 @@ const btnStart = document.getElementById("btn-start");
 const btnOptions = document.getElementById("btn-options");
 const btnOkay = document.getElementById("btn-okay");
 const btnSaveOptions = document.getElementById("btn-save-options");
-const btnCancelOptions = document.getElementById("btn-cancel-options");
+const btnResetOptions = document.getElementById("btn-reset-options");
 const btnCheckAnswer = document.getElementById("btn-check-answer");
 const btnNext = document.getElementById("btn-next"); 
 const btnTryAgain = document.getElementById("btn-try-again");
@@ -55,15 +57,28 @@ function buildApiString(questionAmount, questionCategory, questionDifficulty) {
 }
 
 
+// builds a url for obtaining info about one category
+function buildCategoryInfoString(categoryId) {
+
+    return "https://opentdb.com/api_count.php?category="+categoryId;
+
+
+}
+
+
 // (default question difficulty and question amount)
 let questionAmount = 5;
 let questionCategory = 9; // Category 9 = ANY
 let questionDifficulty = "medium";
+let difficulty_levels = ["easy", "medium", "hard"];
+const MAX_QUESTION_PULL = 50; // per API call
 const categoriesUrl = "https://opentdb.com/api_category.php";
 let url = buildApiString(questionAmount, questionCategory, questionDifficulty);
 
 
 let question_bank = [];
+
+let question_category_info = [];
 
 let question_meta_info = {
 
@@ -120,165 +135,195 @@ function shuffleArray(array) {
   return array;
 }
 
-let questionCategories = [];
-
-async function getCategories(categoriesUrl) {
-
-    try {
-
-        // check to see if the questions are in the bank, get new questions if they are not
-        const cache = JSON.parse(localStorage.getItem("question-categories") || "[]");
-        const meta = JSON.parse(localStorage.getItem("question-meta-info") || "{}")
-
-        const last_fetched = Number(meta.last_fetched) || 0;
-        const ageMs = Date.now() - last_fetched;
-        console.log("Age since last API fetch (ms): ", ageMs);
-
-        // if cache exists and it's "fresh enough"
-        if (cache.length > 0 && ageMs < 2000) { // 2 seconds
-
-            quizQuestions = cache;
-            console.log("loaded cache categories")
-            return;
-        }
-        
-        // fetch the url containing the question categories
-        const res = await fetch(categoriesUrl);
-        const data = await res.json();
-
-        if (!data || !data.trivia_categories) {
-            console.warn("Categories undefined, retrying...");
-            setTimeout(getCategories, 1000);
-            return;
-        }
-
-        console.log("We have categories!");
-
-        for (let element of data.trivia_categories) {
-            let thisCategory = {
-                id: element.id,
-                name: element.name
-            };
-
-        questionCategories.push(thisCategory);
-
-        }
-        localStorage.setItem("question-categories", JSON.stringify(questionCategories));
-        quizQuestions = question_bank;
-
-        meta.last_fetched = Date.now();
-        localStorage.setItem("question-meta-info", JSON.stringify(meta));
-        console.log("API loaded new data: " + JSON.parse(localStorage.getItem("question-meta-info")));
-
-    } catch (err) {
-        console.error("Error fetching Categories:", err);
-        setTimeout(getCategories, 1000);
-
-    } 
-
-    // console.log(questionCategories);
-
-    questionCategories.forEach(category => {
-
-        const option = document.createElement('option');
-        option.value = category.id;
-        option.textContent = category.name;
-        selectCategory.appendChild(option);
-
-    })
-
-    // set the default of questionCategories to questionCategory(9)
-    questionCategories.value = questionCategory;
-
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-getCategories(categoriesUrl);
+
 
 // builds question objects based on the API url passed into it
 async function getQuestions(){
 
     try {
 
+        // check to see if the categories were saves, reestablish them if they are not
+        const cacheCategories = JSON.parse(localStorage.getItem("question_category_info") || "[]");
+
         // check to see if the questions are in the bank, get new questions if they are not
-        const cache = JSON.parse(localStorage.getItem("question-bank") || "[]");
-        const meta = JSON.parse(localStorage.getItem("question-meta-info") || "{}")
+        const cacheQuestions = JSON.parse(localStorage.getItem("question-bank") || "[]");
+        const meta = JSON.parse(localStorage.getItem("question-meta-info") || "{}");
 
         const last_fetched = Number(meta.last_fetched) || 0;
         const ageMs = Date.now() - last_fetched;
         console.log("Age since last API fetch (ms): ", ageMs);
 
         // if cache exists and it's "fresh enough"
-        if (cache.length > 0 && ageMs < 2000) { // 2 sec
+        if (cacheCategories.length > 0 && cacheQuestions.length && ageMs < 2000) {
 
-            quizQuestions = cache;
-            console.log("loaded cache questions")
+            question_category_info = cacheCategories;
+            console.log("Loaded locally stored category and question data (cache)")
             return;
         }
-        
-        // otherwise call the API
+
+        // otherwise call the API // start with obtaining the question information
+        // (categories, num of questions per difficulty)
+
+        // fetch the url containing all the question categories
+        const categoriesRes = await fetch(categoriesUrl);
+        const categoriesData = await categoriesRes.json();
+
+        if (!categoriesData || !categoriesData.trivia_categories) {
+            console.warn("Categories undefined, retrying...");
+            setTimeout(getCategories, 1000);
+            return;
+        }
+
+        // console.log("We have categories!");
+
+        // for each category, make a new thisCategory object
+        for (let category of categoriesData.trivia_categories) {
+
+            // make a new thisCategory object and insert the info from the categoriesUrl (id and name)
+            let thisCategory = {
+                id: category.id,
+                name: category.name,
+            };
+
+            // fetch the current category by its ID
+            let categoryQuestionCountsUrl = buildCategoryInfoString(category.id);
+            const categoryQuestionCountsRes = await fetch(categoryQuestionCountsUrl);
+            const categoryQuestionCountsData = await categoryQuestionCountsRes.json();
+
+            if (!categoryQuestionCountsData || !categoryQuestionCountsData.category_question_count) {
+                console.warn("Categories Info undefined, retrying...");
+                setTimeout(() => {
+
+                    fetch(categoryQuestionCountsUrl)
+                    .then(categoryQuestionCountsRes => categoryQuestionCountsRes.json())
+                    .then(categoryQuestionCountsData => console.log(categoryQuestionCountsData));
+                    
+                }, 1000);
+                return;
+            }
+
+            // console.log("We have category info for category " + category.id + "!"); // WORKS
+
+            // add the corresponding question amounts to each category
+            thisCategory.easy_question_count = categoryQuestionCountsData.category_question_count.total_easy_question_count;
+            thisCategory.medium_question_count = categoryQuestionCountsData.category_question_count.total_medium_question_count;
+            thisCategory.hard_question_count = categoryQuestionCountsData.category_question_count.total_hard_question_count;
+            
+            question_category_info.push(thisCategory);
+
+            // create an option in the select box for each category
+            const option = document.createElement('option');
+            option.value = category.id;
+            option.textContent = category.name;
+            selectCategory.appendChild(option);
+
+        }
+
+        localStorage.setItem("question-categories", JSON.stringify(question_category_info));
+
+        // console.log(question_category_info); // WORKS
+
+        // console.log("We have categories!");
+
+        } catch {
+
+        console.warn("Error loading API url request, too many questions?");
+    }
+
+    let totalCategories = question_category_info.length;
+
+    for (let i = 0; i < totalCategories; i++) {
+
+        let category = question_category_info[i];
+
+        console.log(category);
+
+        // build base structure for this category
+        const thisCategory = {
+        category: category.name,
+        difficulties: { 
+            easy: [], 
+            medium: [], 
+            hard: [] }
+        };
+
+    for (let difficulty_level of difficulty_levels) {
+
+        console.log(`--- Starting ${difficulty_level} for ${category.name} ---`);
+
+        url = buildApiString(MAX_QUESTION_PULL, category.id, difficulty_level);
+
+      try {
         const res = await fetch(url);
         const data = await res.json();
 
         if (!data || !data.results) {
-            console.warn("Data undefined, retrying...");
-            setTimeout(getQuestions, 1000);
-            return;
+          console.warn(`⚠️ No results for ${category.name}, ${difficulty_level}`);
+          continue;
         }
 
-        console.log("We have questions!");
+        data.results.forEach(element => {
+          let thisQuestion = {
+            question: element.question,
+            answers: [...element.incorrect_answers, element.correct_answer],
+            correctAnswerIndex: element.incorrect_answers.length,
+            category: element.category,
+            difficulty: element.difficulty,
+            pointValue:
+              element.difficulty === "easy" ? 1 :
+              element.difficulty === "medium" ? 3 : 5
+          };
 
-        for (let element of data.results) {
-            let thisQuestion = {
-                question: element.question,
-                // ...element.incorrect_answers is shorthand JS for inserting all
-                // incorrect answers into the answers array without a loop
-                answers: [...element.incorrect_answers, element.correct_answer],
-                correctAnswerIndex: element.incorrect_answers.length,
-                category: element.category,
-                difficulty: element.difficulty,
-                pointValue: 1
-            };
+          // Randomize answers
+          let randomizedAnswers = randomizeAnswers(thisQuestion.answers);
+          thisQuestion.answers = randomizedAnswers.answers;
+          thisQuestion.correctAnswerIndex = randomizedAnswers.correctAnswerIndex;
 
-            // determine the point value of each question based on
-            // its difficulty
-            if (thisQuestion.difficulty == "easy") {
+          thisCategory.difficulties[difficulty_level].push(thisQuestion);
+        });
 
-            thisQuestion.pointValue = 1;
+        console.log(`✅ Loaded ${difficulty_level} questions for ${category.name}`);
 
-            } else if (thisQuestion.difficulty == "medium") {
+      } catch (err) {
+        console.error("❌ Error fetching:", err);
+      }
 
-            thisQuestion.pointValue = 3;
+      // wait 5 seconds before next difficulty
+      await sleep(5000);
+    }
 
-            } else if (thisQuestion.difficulty == "hard") {
+    // after all difficulties for this category
+    if (!question_bank.find(c => c.category === thisCategory.category)) {
+      question_bank.push(thisCategory);
+    }
 
-            thisQuestion.pointValue = 5;
-            }
+    localStorage.setItem("question-bank", JSON.stringify(question_bank));
 
-            // use the randomizeAnswers() function to randomize thisQuestion answers
-            let randomizedAnswers = randomizeAnswers(thisQuestion.answers);
-            thisQuestion.answers = randomizedAnswers.answers;
-            thisQuestion.correctAnswerIndex = randomizedAnswers.correctAnswerIndex;
-            // console.log(thisQuestion);
-            // quizQuestions.push(thisQuestion);
-            question_bank.push(thisQuestion);
-        }
+    // progress log
+    console.log(`📦 Saved category '${category.name}' to localStorage`);
+    console.log(`Progress: ${i + 1} / ${totalCategories} categories complete`);
 
-        localStorage.setItem("question-bank", JSON.stringify(question_bank));
-        quizQuestions = question_bank;
+  }
 
-        meta.last_fetched = Date.now();
-        localStorage.setItem("question-meta-info", JSON.stringify(meta));
-        console.log("API loaded new data: " + JSON.parse(localStorage.getItem("question-meta-info")));
+   // retrieve it as a string
+    const savedBank = localStorage.getItem("question-bank");
 
-    } catch (err) {
-        console.error("Error fetching Questions:", err);
-        setTimeout(getQuestions, 1000);
+    // parse back into an object
+    const questionBankObj = JSON.parse(savedBank);
 
-    } 
+    // log it
+    console.log("📦 Question Bank:", questionBankObj);
+
+  console.log("🎉 All categories finished!");
 }
 
 // gets questions according to the results of the default API call
-getQuestions(url);
+getQuestions();
+
 
 // display the current score on the page by appending it
 // to the scoreArea h3 element
@@ -286,8 +331,9 @@ scoreTextNode.textContent = score;
 scoreArea.appendChild(scoreTextNode);
 
 // Add an event listener for when the selected option changes
+// DOESN'T WORK WITH NODE.JS SELECT ELEMENT
 selectCategory.addEventListener('change', function(event) {
-  const selectedValue = event.target.value;
+  let selectedValue = event.target.value;
   console.log('Selected category + id :', selectedValue);
 });
 
@@ -304,19 +350,6 @@ btnStart.addEventListener('click', function(event){
 
     startQuiz();
 });
-
-/* btnOptions.addEventListener('click', function(event){
-
-    openOptions();
-
-}); 
-
-function openOptions(){
-
-    hidePage(landingPage);
-    showPage(optionsPage);
-
-} */
 
 btnSaveOptions.addEventListener('click', function(event){
 
@@ -344,11 +377,6 @@ btnSaveOptions.addEventListener('click', function(event){
 
         showPage(modalContainerQuizOptions);
         showPage(undefinedDifficultyModal);
-
-    } else {
-
-        hidePage(optionsPage);
-        showPage(landingPage);
 
     }
 
@@ -391,7 +419,7 @@ btnSaveOptions.addEventListener('click', function(event){
 
 });
 
-btnCancelOptions.addEventListener('click', function(event){
+btnResetOptions.addEventListener('click', function(event){
 
     // reset all input fields to default values
     numOfQuestions.value = questionAmount;
@@ -406,9 +434,6 @@ btnCancelOptions.addEventListener('click', function(event){
             checkbox.checked = false; // ❌ Uncheck it
         }
     });
-
-    hidePage(optionsPage);
-    showPage(landingPage);
 
 });
 
@@ -457,7 +482,9 @@ function startQuiz(){
 
     console.log(quizQuestions);
 
-    console.log("question category:" + questionCategory);
+    console.log("question category: " + questionCategory);
+
+    console.log(quizQuestions);
 
     categoryArea.textContent = quizQuestions[counter].category;
 
@@ -551,6 +578,7 @@ function setupQuizQuestion(quizQuestions){
 
     questionArea.appendChild(selectBox);
 }
+
 
 // checks whether the user's input is correct and displays
 // a corresponding modal

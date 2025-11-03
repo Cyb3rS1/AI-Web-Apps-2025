@@ -54,7 +54,7 @@
                                 
                                 <div id="btn-options-area">
                                     <button id="btn-save-options">Save Options</button>
-                                    <button id="btn-cancel-options">Cancel</button>
+                                    <button id="btn-reset-options">Reset to Default</button>
                                 </div>
                             </div>
                         </div>
@@ -102,10 +102,28 @@
     </div>
     <script type="text/javascript" src="./scripts/main.js"></script>
     <script>
-        $('#categories').select2({
-        dropdownAutoWidth: false,
-        width: 'resolve'
+        $(document).ready(function() {
+
+            let questionCategory = 9;
+
+            $('#categories').select2({
+            dropdownAutoWidth: false,
+            width: 'resolve'
+            });
+
+        // This works reliably
+        $('#categories').on('change', function () {
+            const selectedValue = $(this).val();
+            console.log('Selected category + id:', selectedValue);
         });
+            });
+
+        $('#btn-reset-options').on('click', function() {
+
+             $('#categories').val(questionCategory).trigger('change');
+
+        });
+    
     </script>
 </body>
 </html>
