@@ -4,19 +4,18 @@ const fs = require("fs");
 const path = require("path");
 const { URL } = require("url");
 
-const PORT = 3000;
-const FRONTEND_ORIGIN = "http://127.0.0.1:5500"; // <-- your app origin
+const PORT = process.env.PORT || 3000;
 
-// 🔐 Replace these
-const CLIENT_ID = "nvf7jobxc5l9pc0klkf0tg1sqrd930";
-const ACCESS_TOKEN = "pea9s96ul6jmqyi4ccw94l8rirq9jh"; // client-credentials token
+// const FRONTEND_ORIGIN = "http://127.0.0.1:5500"; // <-- your app origin
 
 function setCORS(res) {
-  res.setHeader("Access-Control-Allow-Origin", FRONTEND_ORIGIN);
-  res.setHeader("Vary", "Origin");
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
+
+const CLIENT_ID = "nvf7jobxc5l9pc0klkf0tg1sqrd930";
+const ACCESS_TOKEN = "pea9s96ul6jmqyi4ccw94l8rirq9jh"; // client-credentials token
 
 function sendJson(res, status, obj) {
   setCORS(res);
@@ -25,7 +24,7 @@ function sendJson(res, status, obj) {
 }
 
 function serveStatic(req, res) {
-  const urlObj = new URL(req.url, `http://127.0.0.1:${PORT}`);
+  const urlObj = new URL(req.url, `http://localhost:${PORT}`);
   let filePath = urlObj.pathname === "/" ? "/index.html" : urlObj.pathname;
   filePath = path.join(__dirname, "public", filePath);
 
@@ -139,7 +138,7 @@ async function igdbSearchRecent() {
 
 
 const server = http.createServer(async (req, res) => {
-  const urlObj = new URL(req.url, `http://127.0.0.1:${PORT}`);
+  const urlObj = new URL(req.url, `http://localhost:${PORT}`);
   const { pathname } = urlObj;
 
   // Handle preflight CORS
@@ -148,6 +147,11 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(204);
     res.end();
     return;
+  }
+
+  // Optional: simple health check
+  if (pathname === "/ping") {
+    return sendJson(res, 200, { ok: true, time: Date.now() });
   }
 
   if (pathname === "/search" && req.method === "GET") {
@@ -178,6 +182,6 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`API server on http://127.0.0.1:${PORT}`);
-  console.log(`CORS allowed from ${FRONTEND_ORIGIN}`);
+  console.log(`API server on http://localhost:${PORT}`);
+  console.log(`CORS is currently open to all origins (*)`);
 });

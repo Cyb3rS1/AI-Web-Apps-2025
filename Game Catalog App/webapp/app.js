@@ -4,7 +4,7 @@ const searchBtn = document.getElementById("searchBtn");
 const resultsDiv = document.getElementById("results");
 const statusDiv = document.getElementById("status");
 const emptyDiv = document.getElementById("empty");
-const API_BASE = "http://localhost:3000";
+const API_BASE = "http://gamecatalogapp.us-east-2.elasticbeanstalk.com";
 
 // landing page elements
 let landingPage = document.getElementById("landing-page");

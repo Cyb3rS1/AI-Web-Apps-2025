@@ -1,0 +1,15 @@
+.rainbow-text {
+background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet);
+-webkit-background-clip: text;
+color: transparent;
+font-size: 3em;
+font-weight: bold;
+animation: rainbow 5s infinite linear;
+background-size: 400% 100%;
+}
+@keyframes rainbow {
+0% { background-position: 0% 50%; }
+100% { background-position: 100% 50%; }
+}
+
+

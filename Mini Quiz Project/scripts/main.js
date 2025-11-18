@@ -49,11 +49,29 @@ let questionNumber = 1;
 let counter = 0;
 let score = 0;
 
-// fetching questions for API call
-function buildApiString(questionAmount, questionCategory, questionDifficulty) {
+// --- UTILITY HELPERS ---------------------------------------------------------
 
-    return "https://opentdb.com/api.php?amount="+questionAmount+"&category="+questionCategory+"&difficulty="+questionDifficulty+"&type=multiple";
+function buildApiString(amount, categoryId, difficulty) {
+    return `https://opentdb.com/api.php?amount=${amount}&category=${categoryId}&difficulty=${difficulty}&type=multiple`;
+}
 
+function randomizeAnswers(answersToRandomize){
+    const correct = answersToRandomize[answersToRandomize.length - 1];
+    const shuffled = shuffleArray([...answersToRandomize]);
+    return {
+        answers: shuffled,
+        correctAnswerIndex: shuffled.indexOf(correct)
+    };
+}
+
+function shuffleArray(array) {
+    let i = array.length;
+    while (i !== 0) {
+        const r = Math.floor(Math.random() * i);
+        i--;
+        [array[i], array[r]] = [array[r], array[i]];
+    }
+    return array;
 }
 
 
@@ -68,10 +86,9 @@ function buildCategoryInfoString(categoryId) {
 
 // (default question difficulty and question amount)
 let questionAmount = 5;
-let questionCategory = 9; // Category 9 = ANY
+let questionCategory = 9; // Category 9 = General Knowledge
 let questionDifficulty = "medium";
 let difficulty_levels = ["easy", "medium", "hard"];
-const MAX_QUESTION_PULL = 50; // per API call
 const categoriesUrl = "https://opentdb.com/api_category.php";
 let url = buildApiString(questionAmount, questionCategory, questionDifficulty);
 
@@ -89,240 +106,246 @@ let question_meta_info = {
 // where all the question objects are stored
 let quizQuestions = [];
 
-function randomizeAnswers(answersToRandomize){
-
-    let newAnswersAndAnswerIndex = {};
-
-    let correctAnswer = answersToRandomize[answersToRandomize.length - 1];
-
-    // console.log("Correct Answer:" + correctAnswer + " ");
-    // console.log(answersToRandomize);
-
-    newAnswersAndAnswerIndex.answers = shuffleArray(answersToRandomize);
-
-    for (let i = 0; i < newAnswersAndAnswerIndex.answers.length; i++) {
-
-        if (newAnswersAndAnswerIndex.answers[i] == correctAnswer) {
-
-            newAnswersAndAnswerIndex.correctAnswerIndex = i;
-            break;
-        }
-    }
-
-    // console.log(newAnswersAndAnswerIndex);
-    return newAnswersAndAnswerIndex;
-}
-
-function shuffleArray(array) {
-
-    let currentIndex = array.length;
-    let randomIndex;
-
-    // while there remain elements to shuffle,
-    while (currentIndex !== 0 ) {
-
-        // pick a remaining element
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex--;
-
-        // and swap it with the current element
-        [array[currentIndex], array[randomIndex]] = [
-            array[randomIndex], array[currentIndex]
-        ]
-
-    }
-
-  return array;
-}
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 
+// --- FETCH QUESTIONS ONLY WHEN NEEDED ----------------------------------------
 
-// builds question objects based on the API url passed into it
-async function getQuestions(){
+async function fetchQuestions(reqAmount, reqCategoryId, reqDifficulty) {
+    const MAX_QUESTION_PULL = 50;
+    let results = [];
 
-    try {
+    while (reqAmount > 0) {
+        const pullAmount = Math.min(reqAmount, MAX_QUESTION_PULL);
+        const url = buildApiString(pullAmount, reqCategoryId, reqDifficulty);
 
-        // check to see if the categories were saves, reestablish them if they are not
-        const cacheCategories = JSON.parse(localStorage.getItem("question_category_info") || "[]");
-
-        // check to see if the questions are in the bank, get new questions if they are not
-        const cacheQuestions = JSON.parse(localStorage.getItem("question-bank") || "[]");
-        const meta = JSON.parse(localStorage.getItem("question-meta-info") || "{}");
-
-        const last_fetched = Number(meta.last_fetched) || 0;
-        const ageMs = Date.now() - last_fetched;
-        console.log("Age since last API fetch (ms): ", ageMs);
-
-        // if cache exists and it's "fresh enough"
-        if (cacheCategories.length > 0 && cacheQuestions.length && ageMs < 2000) {
-
-            question_category_info = cacheCategories;
-            console.log("Loaded locally stored category and question data (cache)")
-            return;
-        }
-
-        // otherwise call the API // start with obtaining the question information
-        // (categories, num of questions per difficulty)
-
-        // fetch the url containing all the question categories
-        const categoriesRes = await fetch(categoriesUrl);
-        const categoriesData = await categoriesRes.json();
-
-        if (!categoriesData || !categoriesData.trivia_categories) {
-            console.warn("Categories undefined, retrying...");
-            setTimeout(getCategories, 1000);
-            return;
-        }
-
-        // console.log("We have categories!");
-
-        // for each category, make a new thisCategory object
-        for (let category of categoriesData.trivia_categories) {
-
-            // make a new thisCategory object and insert the info from the categoriesUrl (id and name)
-            let thisCategory = {
-                id: category.id,
-                name: category.name,
-            };
-
-            // fetch the current category by its ID
-            let categoryQuestionCountsUrl = buildCategoryInfoString(category.id);
-            const categoryQuestionCountsRes = await fetch(categoryQuestionCountsUrl);
-            const categoryQuestionCountsData = await categoryQuestionCountsRes.json();
-
-            if (!categoryQuestionCountsData || !categoryQuestionCountsData.category_question_count) {
-                console.warn("Categories Info undefined, retrying...");
-                setTimeout(() => {
-
-                    fetch(categoryQuestionCountsUrl)
-                    .then(categoryQuestionCountsRes => categoryQuestionCountsRes.json())
-                    .then(categoryQuestionCountsData => console.log(categoryQuestionCountsData));
-                    
-                }, 1000);
-                return;
-            }
-
-            // console.log("We have category info for category " + category.id + "!"); // WORKS
-
-            // add the corresponding question amounts to each category
-            thisCategory.easy_question_count = categoryQuestionCountsData.category_question_count.total_easy_question_count;
-            thisCategory.medium_question_count = categoryQuestionCountsData.category_question_count.total_medium_question_count;
-            thisCategory.hard_question_count = categoryQuestionCountsData.category_question_count.total_hard_question_count;
-            
-            question_category_info.push(thisCategory);
-
-            // create an option in the select box for each category
-            const option = document.createElement('option');
-            option.value = category.id;
-            option.textContent = category.name;
-            selectCategory.appendChild(option);
-
-        }
-
-        localStorage.setItem("question-categories", JSON.stringify(question_category_info));
-
-        // console.log(question_category_info); // WORKS
-
-        // console.log("We have categories!");
-
-        } catch {
-
-        console.warn("Error loading API url request, too many questions?");
-    }
-
-    let totalCategories = question_category_info.length;
-
-    for (let i = 0; i < totalCategories; i++) {
-
-        let category = question_category_info[i];
-
-        console.log(category);
-
-        // build base structure for this category
-        const thisCategory = {
-        category: category.name,
-        difficulties: { 
-            easy: [], 
-            medium: [], 
-            hard: [] }
-        };
-
-    for (let difficulty_level of difficulty_levels) {
-
-        console.log(`--- Starting ${difficulty_level} for ${category.name} ---`);
-
-        url = buildApiString(MAX_QUESTION_PULL, category.id, difficulty_level);
-
-      try {
         const res = await fetch(url);
         const data = await res.json();
 
-        if (!data || !data.results) {
-          console.warn(`⚠️ No results for ${category.name}, ${difficulty_level}`);
-          continue;
+        if (data?.results?.length > 0) {
+            results = results.concat(data.results);
         }
 
-        data.results.forEach(element => {
-          let thisQuestion = {
+        reqAmount -= pullAmount;
+    }
+
+    // Normalize question format
+    return results.map(element => {
+        const answers = [...element.incorrect_answers, element.correct_answer];
+        const randomized = randomizeAnswers(answers);
+
+        return {
             question: element.question,
-            answers: [...element.incorrect_answers, element.correct_answer],
-            correctAnswerIndex: element.incorrect_answers.length,
+            answers: randomized.answers,
+            correctAnswerIndex: randomized.correctAnswerIndex,
             category: element.category,
             difficulty: element.difficulty,
             pointValue:
-              element.difficulty === "easy" ? 1 :
-              element.difficulty === "medium" ? 3 : 5
-          };
-
-          // Randomize answers
-          let randomizedAnswers = randomizeAnswers(thisQuestion.answers);
-          thisQuestion.answers = randomizedAnswers.answers;
-          thisQuestion.correctAnswerIndex = randomizedAnswers.correctAnswerIndex;
-
-          thisCategory.difficulties[difficulty_level].push(thisQuestion);
-        });
-
-        console.log(`✅ Loaded ${difficulty_level} questions for ${category.name}`);
-
-      } catch (err) {
-        console.error("❌ Error fetching:", err);
-      }
-
-      // wait 5 seconds before next difficulty
-      await sleep(5000);
-    }
-
-    // after all difficulties for this category
-    if (!question_bank.find(c => c.category === thisCategory.category)) {
-      question_bank.push(thisCategory);
-    }
-
-    localStorage.setItem("question-bank", JSON.stringify(question_bank));
-
-    // progress log
-    console.log(`📦 Saved category '${category.name}' to localStorage`);
-    console.log(`Progress: ${i + 1} / ${totalCategories} categories complete`);
-
-  }
-
-   // retrieve it as a string
-    const savedBank = localStorage.getItem("question-bank");
-
-    // parse back into an object
-    const questionBankObj = JSON.parse(savedBank);
-
-    // log it
-    console.log("📦 Question Bank:", questionBankObj);
-
-  console.log("🎉 All categories finished!");
+                element.difficulty === "easy" ? 1 :
+                element.difficulty === "medium" ? 3 : 5
+        };
+    });
 }
 
-// gets questions according to the results of the default API call
-getQuestions();
+/* ============================================================
+   NEW QUESTION BANK SYSTEM — WORKS WITH EXISTING VARIABLE NAMES
+   ============================================================ */
+
+// load full question bank array from localStorage
+function loadQuestionBank() {
+    return JSON.parse(localStorage.getItem("question-bank") || "[]");
+}
+
+// save full question bank array to localStorage
+function saveQuestionBank(bank) {
+    localStorage.setItem("question-bank", JSON.stringify(bank));
+}
+
+// find one category block in the bank
+function getCategoryBlock(bank, categoryName) {
+    return bank.find(entry => entry.category === categoryName);
+}
+
+// splits the requested amount evenly across selected difficulties
+function splitAmountAcrossDifficulties(reqAmount, reqDifficulties) {
+    const base = Math.floor(reqAmount / reqDifficulties.length);
+    const remainder = reqAmount % reqDifficulties.length;
+
+    let result = {};
+    reqDifficulties.forEach((diff, index) => {
+        result[diff] = index === 0 ? base + remainder : base;
+    });
+
+    return result;
+}
+
+// fetches only the needed difficulty amount, chunked to 50 per request
+async function fetchDifficultyChunk(reqAmount, reqCategoryId, reqDifficulty) {
+    const MAX_PULL = 50;
+    let results = [];
+
+    while (reqAmount > 0) {
+        const pullAmount = Math.min(reqAmount, MAX_PULL);
+        const url = buildApiString(pullAmount, reqCategoryId, reqDifficulty);
+
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data?.results?.length > 0) {
+            results = results.concat(data.results);
+        }
+
+        reqAmount -= pullAmount;
+    }
+
+    return results.map(element => {
+        const answers = [...element.incorrect_answers, element.correct_answer];
+        const randomized = randomizeAnswers([...answers]);
+
+        return {
+            question: element.question,
+            answers: randomized.answers,
+            correctAnswerIndex: randomized.correctAnswerIndex,
+            category: element.category,
+            difficulty: element.difficulty,
+            pointValue:
+                element.difficulty === "easy" ? 1 :
+                element.difficulty === "medium" ? 3 : 5
+        };
+    });
+}
+
+// ensures the question-bank has blocks for this category/difficulty
+async function fetchAndStoreIfMissing(
+    reqAmount, 
+    reqCategoryId, 
+    reqCategoryName, 
+    reqDifficulty
+) {
+    let bank = loadQuestionBank();
+    let categoryBlock = getCategoryBlock(bank, reqCategoryName);
+
+    if (!categoryBlock) {
+        categoryBlock = {
+            category: reqCategoryName,
+            difficulties: { easy: [], medium: [], hard: [] }
+        };
+        bank.push(categoryBlock);
+    }
+
+    if (!categoryBlock.difficulties[reqDifficulty]) {
+        categoryBlock.difficulties[reqDifficulty] = [];
+    }
+
+    const existing = categoryBlock.difficulties[reqDifficulty];
+
+    if (existing.length >= reqAmount) {
+        return existing.slice(0, reqAmount);
+    }
+
+    const needed = reqAmount - existing.length;
+
+    const newQuestions = await fetchDifficultyChunk(
+        needed,
+        reqCategoryId,
+        reqDifficulty
+    );
+
+    categoryBlock.difficulties[reqDifficulty] =
+        categoryBlock.difficulties[reqDifficulty].concat(newQuestions);
+
+    saveQuestionBank(bank);
+
+    return categoryBlock.difficulties[reqDifficulty].slice(0, reqAmount);
+}
+
+// main function that prepares quizQuestions exactly as before
+async function prepareQuizQuestions(reqAmount, reqCategoryId, reqDifficulties) {
+    quizQuestions = []; // reset
+
+    const categoryName =
+        selectCategory.options[selectCategory.selectedIndex].text;
+
+    const split = splitAmountAcrossDifficulties(reqAmount, reqDifficulties);
+
+    for (const diff of reqDifficulties) {
+        const needed = split[diff];
+        const questions = await fetchAndStoreIfMissing(
+            needed,
+            reqCategoryId,
+            categoryName,
+            diff
+        );
+        quizQuestions = quizQuestions.concat(questions);
+    }
+
+    quizQuestions = shuffleArray(quizQuestions);
+}
+
+localStorage.removeItem("trivia-categories");
+
+/* ============================================================
+   LOAD & STORE CATEGORIES ON PAGE LOAD
+   ============================================================ */
+
+// Loads categories from local storage
+function loadCategoriesFromStorage() {
+    return JSON.parse(localStorage.getItem("trivia-categories") || "[]");
+}
+
+// Saves categories to local storage
+function saveCategoriesToStorage(categories) {
+    localStorage.setItem("trivia-categories", JSON.stringify(categories));
+}
+
+// Fetches categories from API if not already in storage
+async function loadCategories() {
+    let stored = loadCategoriesFromStorage();
+
+    // If already stored, use them
+    if (stored.length > 0) {
+        populateCategorySelect(stored);
+        return;
+    }
+
+    // Otherwise fetch from API
+    try {
+        const res = await fetch("https://opentdb.com/api_category.php");
+        const data = await res.json();
+
+        if (data.trivia_categories) {
+            saveCategoriesToStorage(data.trivia_categories);
+            populateCategorySelect(data.trivia_categories);
+        }
+    } catch (error) {
+        console.error("Error loading categories:", error);
+    }
+}
+
+// Populates the <select> element with category names & ids
+function populateCategorySelect(categories) {
+    selectCategory.innerHTML = ""; // clear old
+
+    categories.forEach(cat => {
+        const option = document.createElement("option");
+        option.value = cat.id;         // ID for API calls
+        option.textContent = cat.name; // Display category name
+        selectCategory.appendChild(option);
+    });
+}
+
+// Load categories immediately when page loads
+document.addEventListener("DOMContentLoaded", async () => {
+    await loadCategories();
+    
+    // LOAD DEFAULT QUESTIONS IMMEDIATELY
+    await prepareQuizQuestions(
+        questionAmount,
+        questionCategory,
+        [questionDifficulty] // wrap in array because prepareQuizQuestions expects an array
+    );
+
+    console.log("Loaded default quiz questions:", quizQuestions);
+});
 
 
 // display the current score on the page by appending it
@@ -351,72 +374,29 @@ btnStart.addEventListener('click', function(event){
     startQuiz();
 });
 
-btnSaveOptions.addEventListener('click', function(event){
+btnSaveOptions.addEventListener('click', async function(event) {
+    event.preventDefault();
 
-    // clears previously defined selected difficulty options
-    // (prevents duplicates)
+    // clear previous data
     selectedDifficulty = [];
-
-    // clears the default quizQuestions
     quizQuestions = [];
 
-    // takes value from numOfQuestions combo box
-    questionAmount = numOfQuestions.value;
-
+    questionAmount = Number(numOfQuestions.value);
     questionCategory = selectCategory.value;
 
-    // stores all the checked checkbox values into selectedDifficulty
     difficultyCheckboxes.forEach(checkbox => {
-
-        if (checkbox.checked) {
-            selectedDifficulty.push(checkbox.value);
-        }
+        if (checkbox.checked) selectedDifficulty.push(checkbox.value);
     });
 
-    if (selectedDifficulty.length == 0) {
-
+    if (selectedDifficulty.length === 0) {
         showPage(modalContainerQuizOptions);
         showPage(undefinedDifficultyModal);
-
+        return;
     }
 
-    let questionCounts = {};
+    await prepareQuizQuestions(questionAmount, questionCategory, selectedDifficulty);
 
-    const questionsPerDifficulty = Math.floor(questionAmount / selectedDifficulty.length);
-    const remainder = questionAmount % selectedDifficulty.length;
-
-    if (selectedDifficulty.length > 1) {
-
-        selectedDifficulty.forEach(difficulty => {
-
-            questionDifficulty = difficulty;
-
-            questionCounts[difficulty] = questionsPerDifficulty;
-
-        })
-
-    }
-
-    // AI: Distribute remainder (e.g., if questionAmount = 10, give the extra 1 to one difficulty)
-    for (let i = 0; i < remainder; i++) {
-
-        questionCounts[selectedDifficulty[i]]++;
-    }
-
-        console.log(questionCounts);
-
-    // key, value = selectedDifficulty, questionsPerDifficulty
-    Object.entries(questionCounts).forEach(([key, value]) => {
-
-        url = buildApiString(value, questionCategory,`${key}`);
-        getQuestions(url);
-
-        console.log(url);
-
-    })
-
-    console.log(quizQuestions);
-
+    console.log("Quiz Questions Ready:", quizQuestions);
 });
 
 btnResetOptions.addEventListener('click', function(event){
