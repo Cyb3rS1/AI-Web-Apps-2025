@@ -5,7 +5,7 @@
   <title>IGDB Game Search</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-  <link rel="stylesheet" type="text/css" href="styles/styles.css">
+  <link rel="stylesheet" type="text/css" href="./styles/styles.css">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <body>
@@ -20,7 +20,7 @@
           <button id="main-nav-button" class="navbar-toggler d-block d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
-          <div id="profile-access" class="d-none d-md-flex flex-row-md justify-content-end">
+          <div id="profile-access-desktop" class="d-none d-md-flex flex-row-md justify-content-end">
             <div class="d-flex col-auto flex-column mx-3 my-auto row-gap-1 align-content-around">
                 <p class="hello-message m-0 text-end">Hello Gamer!</p>
                 <p class="log-in-link btn btn-info btn-sm p-1 mb-0" data-bs-toggle="modal" data-bs-target="#log-in-modal">Log in</p>
@@ -33,7 +33,7 @@
             </div>
           </div>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <div id="profile-access" class="d-flex d-md-none flex-row-md justify-content-end pt-3">
+            <div id="profile-access-mobile" class="d-flex d-md-none flex-row-md justify-content-end pt-3">
               <div class="d-flex col-auto flex-column mx-3 my-auto row-gap-1 align-content-around">
                   <p class="hello-message m-0 text-end">Hello Gamer!</p>
                     <p class="log-in-link btn btn-info btn-sm p-1 mb-0" data-bs-toggle="modal" data-bs-target="#log-in-modal">Log in</p>
@@ -128,28 +128,6 @@
             <span class="year"></span>
             <span class="platform"></span>
             <div class="genre"></div>
-          </div>
-
-          <div class="accordion" id="accordionSummary">
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button class="accordion-button collapsed"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseOne"
-                        aria-expanded="true"
-                        aria-controls="collapseOne">
-                  Summary
-                </button>
-              </h2>
-              <div id="collapseOne"
-                  class="accordion-collapse collapse"
-                  data-bs-parent="#accordionSummary">
-                <div class="accordion-body">
-                  <p class="desc text-dark">Short summary goes here...</p>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </article>
@@ -331,6 +309,5 @@
 
   
   <script type="text/javascript" src="./app.js"></script>
-  <script type="text/javascript" src="./server.js"></script>
 </body>
 </html>

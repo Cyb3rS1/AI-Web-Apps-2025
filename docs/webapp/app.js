@@ -823,7 +823,6 @@ function setUpEventListeners() {
       saveUser(newUser);
       localStorage.setItem("currentUser", username);
 
-      // alert("✅ Account created!");
       showToast("✅ Account created!", "success");
 
       // ✅ Automatically log them in

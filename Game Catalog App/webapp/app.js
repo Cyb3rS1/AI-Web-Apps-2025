@@ -110,7 +110,6 @@ function refreshUIAfterLogin() {
   if (!currentUser) return;
 
   // Update dashboard and profile headings
-  dashboardMessage.innerHTML = `${currentUser.name}'s Dashboard`;
   profileMessage.innerHTML = `${currentUser.name}'s Profile`;
 
   // Populate hello messages
@@ -141,6 +140,8 @@ function refreshUIAfterLogin() {
   logInLinks.forEach(hideElement);
   
   showElement(logOutLink);
+
+  showModal(landingPage);
 }
 
 
@@ -447,14 +448,27 @@ function renderDashboardPlaylists(user) {
   const oldContainer = dashboard.querySelector(".playlists-container");
   if (oldContainer) oldContainer.remove();
 
+  let dashboardBar = document.createElement("div");
+  dashboardBar.className = "py-4";
+  dashboardBar.id = "dashboard-bar";
+
+  const oldBar = dashboard.querySelector("#dashboard-bar");
+  if (oldBar) oldBar.remove();
+
+  dashboard.prepend(dashboardBar);
+
+  let userPlaylistsMessage = document.createElement("h1");
+  userPlaylistsMessage.textContent = `Your Playlists`;
+  dashboardBar.appendChild(userPlaylistsMessage);
+
   // ---------------- Collapse All Button ----------------
   let collapseAllBtn = dashboard.querySelector("#collapse-all-btn");
   if (!collapseAllBtn) {
     collapseAllBtn = document.createElement("button");
     collapseAllBtn.id = "collapse-all-btn";
-    collapseAllBtn.className = "btn btn-warning mb-3";
+    collapseAllBtn.className = "btn btn-warning my-3";
     collapseAllBtn.textContent = "Collapse All Playlists";
-    dashboard.prepend(collapseAllBtn);
+    dashboardBar.appendChild(collapseAllBtn);
 
     collapseAllBtn.addEventListener("click", () => {
       const allCollapses = dashboard.querySelectorAll(".playlist-collapse.show");
@@ -464,8 +478,11 @@ function renderDashboardPlaylists(user) {
     });
   }
 
+
+  dashboard.prepend(dashboardBar);
+
   const container = document.createElement("div");
-  container.className = "playlists-container row g-3 mt-3";
+  container.className = "playlists-container row g-3";
 
   const playlists = user.saved_playlists || {};
 
@@ -488,7 +505,7 @@ function renderDashboardPlaylists(user) {
 
     const title = document.createElement("h5");
     title.textContent = name;
-    title.className = "mb-2 text-truncate";
+    title.className = "mb-2";
     card.appendChild(title);
 
     const cover = document.createElement("div");
@@ -558,7 +575,7 @@ function renderGamesInPlaylist(playlistName, games, containerEl) {
   wrapper.className = "playlist-games-wrapper position-relative mb-3";
 
   const gamesContainer = document.createElement("div");
-  gamesContainer.className = "playlist-games d-flex overflow-auto py-2";
+  gamesContainer.className = "playlist-games d-flex overflow-auto py-2 h-25";
   gamesContainer.style.gap = "1rem";
   gamesContainer.style.scrollSnapType = "x mandatory";
   gamesContainer.style.paddingBottom = "0.5rem";
@@ -567,7 +584,7 @@ function renderGamesInPlaylist(playlistName, games, containerEl) {
   games.forEach((game) => {
     const cardWrapper = document.createElement("div");
     cardWrapper.className = "flex-shrink-0";
-    cardWrapper.style.width = "150px";
+    cardWrapper.style.width = "170px";
     cardWrapper.style.scrollSnapAlign = "start";
 
     const card = document.createElement("div");
@@ -580,12 +597,20 @@ function renderGamesInPlaylist(playlistName, games, containerEl) {
       ? "https:" + game.cover.url.replace("t_thumb", "t_cover_big")
       : "./assets/fallback-image.png";
     img.alt = game.name || "Game cover";
+
+    // Fix image layout
+    img.style.height = "h-100";
+    img.style.objectFit = "cover";
+    img.style.width = "100%";
+
+
     card.appendChild(img);
 
     const body = document.createElement("div");
-    body.className = "card-body p-2";
+    body.className = "card-body m-0 p-3";
     const title = document.createElement("h6");
-    title.className = "card-title mb-0 text-truncate text-light";
+    title.className = "card-text mb-0 text-light";
+    title.style.whiteSpace = "normal";
     title.textContent = game.name || "Untitled";
     body.appendChild(title);
     card.appendChild(body);
